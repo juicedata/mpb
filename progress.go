@@ -235,15 +235,9 @@ func (p *Progress) serve(s *pState) {
 }
 
 func (p *Progress) Write(content []byte) (n int, err error) {
-	p.cw.Lock()
-	defer p.cw.Unlock()
-	if p.cw.LastTypeIsProgress {
-		_ = p.cw.ClearLines()
-	}
-	write, err := p.cw.Write(content)
-	p.cw.LastTypeIsProgress = false
-	return write, err
+	return p.cw.FlushLog(content)
 }
+
 func (s *pState) newTicker(done <-chan struct{}) chan time.Time {
 	ch := make(chan time.Time)
 	if s.shutdownNotifier == nil {
