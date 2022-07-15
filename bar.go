@@ -216,6 +216,10 @@ func (b *Bar) IncrInt64(n int64) {
 		s.iterated = true
 		s.lastN = n
 		s.current += n
+		if s.current >= s.total {
+			s.triggerComplete = false
+			s.total = s.current + 1
+		}
 		if s.triggerComplete && s.current >= s.total {
 			s.current = s.total
 			s.completed = true
