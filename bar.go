@@ -119,6 +119,17 @@ func (b *Bar) ID() int {
 	}
 }
 
+// Total returns bar's current total
+func (b *Bar) Total() int64 {
+	result := make(chan int64)
+	select {
+	case b.operateState <- func(s *bState) { result <- s.total }:
+		return <-result
+	case <-b.done:
+		return b.cacheState.total
+	}
+}
+
 // Current returns bar's current number, in other words sum of all increments.
 func (b *Bar) Current() int64 {
 	result := make(chan int64)
